@@ -4,13 +4,15 @@
 # or Web sockets.
 
 ###
-   Stomp Over WebSocket http://www.jmesnil.net/stomp-websocket/doc/ | Apache License V2.0
+   Stomp Over WebSocket
+   http://www.jmesnil.net/stomp-websocket/doc/ | Apache License V2.0
 
    Copyright (C) 2013 [Jeff Mesnil](http://jmesnil.net/)
 ###
 
 Stomp = require('./stomp')
 net   = require('net')
+tls   = require('tls')
 
 # in node.js apps, `setInterval` and `clearInterval` methods used to handle
 # hear-beats are implemented using node.js Timers
@@ -21,19 +23,28 @@ Stomp.Stomp.clearInterval = (id) ->
 
 # wrap a TCP socket (provided by node.js's net module) in a "Web Socket"-like
 # object
-wrapTCP = (port, host) ->
+wrapTCP = (host, port, sslOptions) ->
 
   # the raw TCP socket
   socket = null
 
   # the "Web Socket"-like object expected by stomp.js
   ws = {
-    url: 'tcp:// ' + host + ':' + port
+    url: 'tcp://' + host + ':' + port
     send: (d) -> socket.write(d)
     close: -> socket.end()
   }
 
-  socket = net.connect port, host, (e) -> ws.onopen()
+  if sslOptions
+    socket = tls.connect port, host, sslOptions, (e) ->
+      unless socket.authorized
+        console.error 'SSL is not authorized: ' + socket.authorizationError
+        ws.onclose?(e)
+      else
+        ws.onopen()
+  else
+    socket = net.connect port, host, (e) -> ws.onopen()
+
   socket.on 'error', (e) -> ws.onclose?(e)
   socket.on 'close', (e) -> ws.onclose?(e)
   socket.on 'data', (data) ->
@@ -78,8 +89,8 @@ wrapWS = (url) ->
 
 # This method can be used by node.js app to connect to a STOMP broker over a
 # TCP socket
-overTCP = (host, port) ->
-  socket = wrapTCP port, host
+overTCP = (host, port, sslOptions) ->
+  socket = wrapTCP host, port, sslOptions
   Stomp.Stomp.over socket
 
 # This method can be used by node.js app to connect to a STOMP broker over a

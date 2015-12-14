@@ -159,15 +159,15 @@ class Client
   #
   #     client.debug = function(str) {
   #         // append the debug log to a #debug div
-  #         $("#debug").append(str + "\n");
-  #     };
+  #         $("#debug").append(str + "\n")
+  #     }
   debug: (message) ->
     window?.console?.log message
-      
+
   # Utility method to get the current timestamp (Date.now is not defined in IE8)
   now= ->
     if Date.now then Date.now() else new Date().valueOf
-  
+
   # Base method to transmit any stomp frame
   _transmit: (command, headers, body) ->
     out = Frame.marshall(command, headers, body)
@@ -290,9 +290,9 @@ class Client
               messageID = frame.headers["message-id"]
               # add `ack()` and `nack()` methods directly to the returned frame
               # so that a simple call to `message.ack()` can acknowledge the message.
-              frame.ack = (headers = {}) =>
+              frame.ack = (headers = {}) ->
                 client .ack messageID , subscription, headers
-              frame.nack = (headers = {}) =>
+              frame.nack = (headers = {}) ->
                 client .nack messageID, subscription, headers
               onreceive frame
             else
@@ -304,7 +304,7 @@ class Client
           # the server:
           #
           #     client.onreceipt = function(frame) {
-          #       receiptID = frame.headers['receipt-id'];
+          #       receiptID = frame.headers['receipt-id']
           #       ...
           #     }
           when "RECEIPT"
@@ -373,9 +373,9 @@ class Client
   # It is preferable to unsubscribe from a subscription by calling
   # `unsubscribe()` directly on the object returned by `client.subscribe()`:
   #
-  #     var subscription = client.subscribe(destination, onmessage);
+  #     var subscription = client.subscribe(destination, onmessage)
   #     ...
-  #     subscription.unsubscribe();
+  #     subscription.unsubscribe()
   unsubscribe: (id) ->
     delete @subscriptions[id]
     @_transmit "UNSUBSCRIBE", {
@@ -398,7 +398,7 @@ class Client
       abort: ->
         client.abort txid
     }
-  
+
   # [COMMIT Frame](http://stomp.github.com/stomp-specification-1.1.html#COMMIT)
   #
   # * `transaction` is MANDATORY.
@@ -406,14 +406,14 @@ class Client
   # It is preferable to commit a transaction by calling `commit()` directly on
   # the object returned by `client.begin()`:
   #
-  #     var tx = client.begin(txid);
+  #     var tx = client.begin(txid)
   #     ...
-  #     tx.commit();
+  #     tx.commit()
   commit: (transaction) ->
     @_transmit "COMMIT", {
       transaction: transaction
     }
-  
+
   # [ABORT Frame](http://stomp.github.com/stomp-specification-1.1.html#ABORT)
   #
   # * `transaction` is MANDATORY.
@@ -421,14 +421,14 @@ class Client
   # It is preferable to abort a transaction by calling `abort()` directly on
   # the object returned by `client.begin()`:
   #
-  #     var tx = client.begin(txid);
+  #     var tx = client.begin(txid)
   #     ...
-  #     tx.abort();
+  #     tx.abort()
   abort: (transaction) ->
     @_transmit "ABORT", {
       transaction: transaction
     }
-  
+
   # [ACK Frame](http://stomp.github.com/stomp-specification-1.1.html#ACK)
   #
   # * `messageID` & `subscription` are MANDATORY.
@@ -440,10 +440,10 @@ class Client
   #       function(message) {
   #         // process the message
   #         // acknowledge it
-  #         message.ack();
+  #         message.ack()
   #       },
   #       {'ack': 'client'}
-  #     );
+  #     )
   ack: (messageID, subscription, headers = {}) ->
     headers["message-id"] = messageID
     headers.subscription = subscription
@@ -460,10 +460,10 @@ class Client
   #       function(message) {
   #         // process the message
   #         // an error occurs, nack it
-  #         message.nack();
+  #         message.nack()
   #       },
   #       {'ack': 'client'}
-  #     );
+  #     )
   nack: (messageID, subscription, headers = {}) ->
     headers["message-id"] = messageID
     headers.subscription = subscription

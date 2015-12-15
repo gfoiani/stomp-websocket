@@ -1,6 +1,6 @@
 {
   "name": "stompjs",
-  "version": "2.3.4-next",
+  "version": "2.4.0",
   "author": "Jeff Mesnil <jmesnil@gmail.com>",
   "description": "STOMP for JavaScript apps (Web browser & node.js)",
   "scripts": {
@@ -10,10 +10,10 @@
   "devDependencies": {
     "coffee-script": "latest",
     "coffeelint": "latest",
-    "jasmine-node": "latest",
-    "uglify-js": "latest",
+    "connect": "latest",
     "docco": "latest",
-    "connect": "latest"
+    "jasmine": "latest",
+    "uglify-js": "latest"
   },
   "optionalDependencies": {
     "websocket": "latest"

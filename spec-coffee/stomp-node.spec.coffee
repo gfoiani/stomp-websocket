@@ -5,14 +5,14 @@ fs = require('fs')
 describe "Stomp Node", ->
 
   it "lets you connect to a server with TCP socket and get a callback", (done) ->
-    client = Stomp.overTCP 'localhost', 61613
+    client = Stomp.overTCP 'host', 61613 # STOMP port
     connectionHeaders = {
       'max_hbrlck_fails': 10,
       'accept-version': '1.0,1.1,1.2',
       'heart-beat': '10000,10000',
-      login: 'c39b1999-2786-44e1-a76c-7a5cd6e18b73',
-      passcode: 'Rbqw8X-yzM-iVkEWSzsAwXvtRXUw5qz_5U_JVsst',
-      host: '34a76890-9b71-4dfb-8baa-c1f394489c95'
+      login: 'login',
+      passcode: 'passcode',
+      host: 'vhost' # for RabbitMQ
     }
     client.connect connectionHeaders, ->
       expect(client.connected).toBe(true)
@@ -24,19 +24,21 @@ describe "Stomp Node", ->
 
   it "lets you connect to a server with SSL TCP socket and get a callback", (done)->
     sslOptions = {
-      cert: fs.readFileSync('/Users/gfoiani/tls-gen/basic/result/client_certificate.pem'),
-      key: fs.readFileSync('/Users/gfoiani/tls-gen/basic/result/client_key.pem'),
-      ca: [fs.readFileSync('/Users/gfoiani/tls-gen/basic/result/ca_certificate.pem')],
+      cert: fs.readFileSync('/path/to/client_certificate.pem'),
+      key: fs.readFileSync('/path/to/client_key.pem'),
+      ca: [fs.readFileSync('/path/to/ca_certificate.pem')],
       secureProtocol: 'TLSv1_method'
     }
-    client = Stomp.overTCP 'FojaMac', 61614, sslOptions
+    # STOMP SSL port 61614
+    # host must be suitable for certificate
+    client = Stomp.overTCP 'host', 61614, sslOptions
     connectionHeaders = {
       'max_hbrlck_fails': 10,
       'accept-version': '1.0,1.1,1.2',
       'heart-beat': '10000,10000',
-      login: 'c39b1999-2786-44e1-a76c-7a5cd6e18b73',
-      passcode: 'Rbqw8X-yzM-iVkEWSzsAwXvtRXUw5qz_5U_JVsst',
-      host: '34a76890-9b71-4dfb-8baa-c1f394489c95'
+      login: 'login',
+      passcode: 'passcode',
+      host: 'vhost' # for RabbitMQ
     }
     client.connect connectionHeaders, (()->
       expect(client.connected).toBe(true)

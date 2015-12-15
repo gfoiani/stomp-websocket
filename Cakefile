@@ -12,7 +12,7 @@ task 'watch', 'Watch for changes in coffee files to build and test', ->
       invoke 'build:min'
       invoke 'build:doc'
       invoke 'build:spec'
-    watchDir 'coffee-spec', ->
+    watchDir 'spec-coffee', ->
       invoke 'build:spec'
     watchDir 'spec', (file)->
       # We only want to run tests once (a second),
@@ -53,7 +53,7 @@ task 'build:doc', 'Build docco documentation', ->
 
 task 'build:spec', 'Build the spec files into dist/spec', ->
   util.log "Compiling spec..."
-  exec binDir + "coffee -o spec/ -c coffee-spec/", (err, stdout, stderr) ->
+  exec binDir + "coffee -o spec/ -c spec-coffee/", (err, stdout, stderr) ->
     handleError(err) if err
 
 watchDir = (dir, callback) ->
